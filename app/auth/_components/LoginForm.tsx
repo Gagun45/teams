@@ -18,9 +18,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "./ErrorMessage";
 import { useState } from "react";
+import SuccessMessage from "./SuccessMessage";
 
 const LoginForm = () => {
   const [error, setError] = useState<string | null>();
+  const [success, setSuccess] = useState<string | null>();
   const form = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -30,9 +32,11 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (values: LoginFormType) => {
+    setSuccess(null);
     setError(null);
     const result = await login(values);
     setError(result?.error ?? null);
+    setSuccess(result?.success ?? null);
   };
 
   return (
@@ -66,6 +70,7 @@ const LoginForm = () => {
           )}
         />
         {error && <ErrorMessage message={error} />}
+        {success && <SuccessMessage message={success} />}
 
         {form.formState.isSubmitting ? (
           <LoadingButton />

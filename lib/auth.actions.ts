@@ -1,9 +1,12 @@
 "use server";
 
-import { prisma } from "./prisma";
+import { signIn, signOut } from "./auth";
+import { getUserByEmail } from "./helper/user.helper";
 import type { LoginFormType, RegisterFormType } from "./types";
 import { loginSchema, registerSchema } from "./zod-schemas";
-import { hash } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
+import { AuthError } from "next-auth";
+import { prisma } from "./db";
 
 export const register = async (values: RegisterFormType) => {
   try {
@@ -11,7 +14,7 @@ export const register = async (values: RegisterFormType) => {
     if (!validatedFields.success) return { error: "Invalid fields" };
     const { email, password, name } = validatedFields.data;
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({ where: { email } });
 
     if (existingUser) return { error: "Email already taken" };
     const hashedPassword = await hash(password, 10);
@@ -35,5 +38,27 @@ export const login = async (values: LoginFormType) => {
   const validatedFields = loginSchema.safeParse(values);
   if (!validatedFields.success) return { error: "Invalid fields" };
   const { email, password } = validatedFields.data;
-  //TODO Login logic
+
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser) return { error: "Email not found" };
+  if (!existingUser.password) return { error: "Password not set yet" };
+
+  const passwordMatch = await compare(password, existingUser.password);
+
+  if (!passwordMatch) return { error: "Credentials invalid" };
+
+  try {
+    await signIn("credentials", { email, password });
+    return { success: "Logged in" };
+  } catch (err) {
+    if (err instanceof AuthError) {
+      return { error: "Something went wrong" };
+    }
+    throw err
+  }
+};
+
+export const logout = async () => {
+  await signOut();
 };
