@@ -12,7 +12,7 @@ interface Props {
 
 const CardWrapper = ({ children, linkHref, linkLable, title }: Props) => {
   return (
-    <div className=" border-2 rounded-md shadow-2xl min-h-96 flex gap-4 flex-col items-center py-6 max-w-xl mx-auto">
+    <div className="border-2 px-8 md:px-24 rounded-md shadow-2xl min-h-96 flex gap-4 flex-col items-center py-6 max-w-xl mx-auto">
       <div className="flex text-4xl tracking-widest font-bold items-center gap-2">
         <LockKeyholeIcon className="size-12" />
         <h2>Auth</h2>
