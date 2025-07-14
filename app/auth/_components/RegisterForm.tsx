@@ -10,14 +10,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { register } from "@/lib/auth.actions";
+import type { RegisterFormType } from "@/lib/types";
 import { registerSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-type RegisterFormType = z.infer<typeof registerSchema>;
+import ErrorMessage from "./ErrorMessage";
+import { useState } from "react";
+import LoadingButton from "@/components/General/LoadingButton";
+import { toast } from "sonner";
 
 const RegisterForm = () => {
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -27,8 +32,14 @@ const RegisterForm = () => {
     },
   });
 
-  const onSubmit = (values: RegisterFormType) => {
-    console.log(values);
+  const onSubmit = async (values: RegisterFormType) => {
+    setError(null);
+    const result = await register(values);
+    setError(result.error ?? null);
+    if (result.success) {
+      toast.success("User created!");
+      form.reset();
+    }
   };
 
   return (
@@ -75,7 +86,12 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        <Button>Register</Button>
+        {error && <ErrorMessage message={error} />}
+        {form.formState.isSubmitting ? (
+          <LoadingButton />
+        ) : (
+          <Button disabled={form.formState.isSubmitting}>Register</Button>
+        )}
       </form>
     </Form>
   );

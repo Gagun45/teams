@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingButton from "@/components/General/LoadingButton";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,14 +11,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { login } from "@/lib/auth.actions";
+import type { LoginFormType } from "@/lib/types";
 import { loginSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-type LoginFormType = z.infer<typeof loginSchema>;
+import ErrorMessage from "./ErrorMessage";
+import { useState } from "react";
 
 const LoginForm = () => {
+  const [error, setError] = useState<string | null>();
   const form = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -26,8 +29,10 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: LoginFormType) => {
-    console.log(values);
+  const onSubmit = async (values: LoginFormType) => {
+    setError(null);
+    const result = await login(values);
+    setError(result?.error ?? null);
   };
 
   return (
@@ -60,7 +65,13 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button>Login</Button>
+        {error && <ErrorMessage message={error} />}
+
+        {form.formState.isSubmitting ? (
+          <LoadingButton />
+        ) : (
+          <Button disabled={form.formState.isSubmitting}>Login</Button>
+        )}
       </form>
     </Form>
   );
