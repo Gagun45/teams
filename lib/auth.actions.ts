@@ -49,13 +49,13 @@ export const login = async (values: LoginFormType) => {
   if (!passwordMatch) return { error: "Credentials invalid" };
 
   try {
-    await signIn("credentials", { email, password });
+    await signIn("credentials", { email, password, redirectTo: "/protected" });
     return { success: "Logged in" };
   } catch (err) {
     if (err instanceof AuthError) {
       return { error: "Something went wrong" };
     }
-    throw err
+    throw err;
   }
 };
 

@@ -1,11 +1,16 @@
-'use client'
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { logout } from "@/lib/auth.actions"
+import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { logout } from "@/lib/auth.actions";
 
 const LogoutButton = () => {
   return (
-     <Button onClick={async () => await logout()}>Logout</Button>
-  )
-}
-export default LogoutButton
+    <DropdownMenuItem>
+      <Button onClick={async () => await logout()}>
+        Logout
+      </Button>
+    </DropdownMenuItem>
+  );
+};
+export default LogoutButton;

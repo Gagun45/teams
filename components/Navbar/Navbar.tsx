@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import LogoutButton from "@/app/auth/_components/LogoutButton";
+import UserButton from "./UserButton/UserButton";
 
 const Navbar = async () => {
   const session = await auth();
@@ -11,11 +11,7 @@ const Navbar = async () => {
       </Link>
       <Link href={"/protected"}>Protected</Link>
 
-      {session?.user ? (
-        <LogoutButton />
-      ) : (
-        <Link href={"/auth/login"}>Login</Link>
-      )}
+      {session?.user ? <UserButton /> : <Link href={"/auth/login"}>Login</Link>}
     </header>
   );
 };
