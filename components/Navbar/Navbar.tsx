@@ -7,6 +7,7 @@ const Navbar = () => {
         Teams
       </Link>
       <Link href={'/protected'}>Protected</Link>
+      <Link href={'/auth/login'}>Login</Link>
     </header>
   );
 };
