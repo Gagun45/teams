@@ -6,7 +6,7 @@ import { getUserById } from "./helper/user.helper";
 import type { User, UserRoles } from "@prisma/client";
 import "next-auth/jwt";
 
-type ExtendedUser = User & { role: UserRoles };
+type ExtendedUser = User & { role: UserRoles; emailVerified: Date | null };
 
 declare module "next-auth" {
   interface Session {
@@ -17,13 +17,17 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     role: UserRoles;
+    emailVerified: Date | null;
   }
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     session: async ({ session, token }) => {
+      if (!token.sub) return session;
       session.user.role = token.role;
+      session.user.emailVerified = token.emailVerified;
+      session.user.id = token.sub;
       return session;
     },
     jwt: async ({ token }) => {
@@ -31,6 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
       token.role = existingUser.role;
+      token.emailVerified = null;
       return token;
     },
   },

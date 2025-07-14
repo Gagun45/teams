@@ -19,8 +19,10 @@ import { useForm } from "react-hook-form";
 import ErrorMessage from "./ErrorMessage";
 import { useState } from "react";
 import SuccessMessage from "./SuccessMessage";
+import { useSession } from "next-auth/react";
 
 const LoginForm = () => {
+  const { update } = useSession();
   const [error, setError] = useState<string | null>();
   const [success, setSuccess] = useState<string | null>();
   const form = useForm<LoginFormType>({
@@ -37,6 +39,7 @@ const LoginForm = () => {
     const result = await login(values);
     setError(result?.error ?? null);
     setSuccess(result?.success ?? null);
+    if (success) await update();
   };
 
   return (
