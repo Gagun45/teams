@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { UserCircle2Icon } from "lucide-react";
 import Link from "next/link";
@@ -18,9 +19,9 @@ const UserButton = () => {
   const user = useCurrentUser();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="cursor-pointer">
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarImage src="/user.png" className="bg-secondary" />
           <AvatarFallback className="bg-main">
             <UserCircle2Icon className="size-full" />
           </AvatarFallback>
@@ -41,7 +42,8 @@ const UserButton = () => {
         <DropdownMenuSeparator />
         <LogoutButton />
         <DropdownMenuSeparator />
-        <DropdownMenuItem>{user?.email}</DropdownMenuItem>
+
+        <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
       </DropdownMenuContent>
     </DropdownMenu>
   );

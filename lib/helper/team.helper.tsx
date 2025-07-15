@@ -61,6 +61,16 @@ export const leaveTeam = async (teamId: string) => {
   return { success: "You left a team" };
 };
 
+export const getMyTeams = async () => {
+  const session = await auth();
+  const userId = session?.user.id;
+  if (!userId) return [];
+  const myTeams = await prisma.team.findMany({
+    where: { members: { some: { userId } } },
+  });
+  return myTeams;
+};
+
 export const checkMembership = async (teamId: string) => {
   const session = await auth();
   const userId = session?.user.id;
