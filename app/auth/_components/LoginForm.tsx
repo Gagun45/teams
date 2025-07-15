@@ -37,9 +37,8 @@ const LoginForm = () => {
     setSuccess(null);
     setError(null);
     const result = await login(values);
-    setError(result?.error ?? null);
-    setSuccess(result?.success ?? null);
-    if (success) await update();
+    console.log('logged in')
+    if (result.success) await update();
   };
 
   return (

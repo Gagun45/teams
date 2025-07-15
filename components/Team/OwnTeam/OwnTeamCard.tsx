@@ -1,12 +1,14 @@
 import type { TeamWithMembersAndOwner } from "@/lib/types";
 import Image from "next/image";
 import ViewAllMembersSheet from "./ViewAllMembersSheet";
+import JoinLink from "./JoinLink";
 
 interface Props {
   team: TeamWithMembersAndOwner;
 }
 
 const OwnTeamCard = ({ team }: Props) => {
+  const joinLink = `http://localhost:3000/teams/join?token=${team.joinLinkToken}`;
   return (
     <div className="flex items-center gap-4">
       <div className="size-36 relative">
@@ -15,8 +17,9 @@ const OwnTeamCard = ({ team }: Props) => {
       <div className="flex self-start flex-col">
         <span className="font-semibold">{team.name}</span>
         <span>
-          Members: {team.members.length} <ViewAllMembersSheet team={team}/>
+          Members: {team.members.length} <ViewAllMembersSheet team={team} />
         </span>
+        <JoinLink joinLink={joinLink} />
       </div>
     </div>
   );

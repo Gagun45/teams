@@ -2,6 +2,7 @@
 
 import { auth } from "../auth";
 import { prisma } from "../db";
+import { getTeamByJoinLinkToken } from "../helper/team.helper";
 import type { NewTeamType } from "../types";
 import { newTeamSchema } from "../zod-schemas";
 
@@ -33,4 +34,23 @@ export const createNewTeam = async (values: NewTeamType) => {
     console.log("Error: ", err);
     return { error: "Something went wrong" };
   }
+};
+
+export const joinTeamByLink = async (joinLinkToken: string) => {
+  if (!joinLinkToken) return { error: "Missing token" };
+  const team = await getTeamByJoinLinkToken(joinLinkToken);
+  if (!team) return { error: "Wrong token" };
+  const session = await auth();
+  if (!session) return { error: "Authorized only" };
+  const user = session?.user;
+  if (team.members.some((member) => member.userId === user.id))
+    return { error: "Already joined" };
+  await prisma.teamMember.create({
+    data: {
+      teamRole: "viewer",
+      teamId: team.id,
+      userId: user.id,
+    },
+  });
+  return { success: "You joined a team" };
 };

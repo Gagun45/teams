@@ -38,27 +38,17 @@ export const getTeamById = async (id: string) => {
   }
 };
 
-export const joinTeam = async (teamId: string) => {
-  const session = await auth();
-  if (!session?.user) return { error: "Access denied" };
-  await prisma.teamMember.create({
-    data: {
-      teamRole: "viewer",
-      userId: session.user.id,
-      teamId,
-    },
-  });
-  return { success: "You joined a team" };
-};
-
-export const leaveTeam = async (teamId: string) => {
-  const session = await auth();
-  const userId = session?.user.id;
-  if (!userId) return { error: "Access denied" };
-  await prisma.teamMember.delete({
-    where: { userId_teamId: { userId, teamId } },
-  });
-  return { success: "You left a team" };
+export const getTeamByJoinLinkToken = async (joinLinkToken: string) => {
+  if (!joinLinkToken) return null;
+  try {
+    const team = await prisma.team.findFirstOrThrow({
+      where: { joinLinkToken },
+      include: { members: true },
+    });
+    return team;
+  } catch {
+    return null;
+  }
 };
 
 export const getMyTeams = async () => {

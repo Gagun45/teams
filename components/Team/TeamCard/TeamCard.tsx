@@ -3,13 +3,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { ShirtIcon } from "lucide-react";
 import Link from "next/link";
-import JoinButton from "./JoinButton";
 import type { TeamWithMembersAndOwner } from "@/lib/types";
 
 interface Props {
@@ -18,10 +16,13 @@ interface Props {
 
 const TeamCard = ({ team }: Props) => {
   return (
-    <Card className="w-54 pb-1">
+    <Card className="w-54">
       <CardHeader>
         <CardTitle>
-          <Link className="hover:underline line-clamp-1" href={`/teams/team/${team.id}`}>
+          <Link
+            className="hover:underline line-clamp-1"
+            href={`/teams/team/${team.id}`}
+          >
             {team.name}
           </Link>
         </CardTitle>
@@ -33,16 +34,13 @@ const TeamCard = ({ team }: Props) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Avatar className="aspect-square h-36 w-full mx-auto rounded-none">
+        <Avatar className="aspect-square h-36 w-full mx-auto rounded-md">
           <AvatarImage src="https://github.com/shadcn.png" />
           <AvatarFallback className="rounded-md bg-main">
             <ShirtIcon className="size-full" />
           </AvatarFallback>
         </Avatar>
       </CardContent>
-      <CardFooter className="mt-auto">
-        <JoinButton team={team} />
-      </CardFooter>
     </Card>
   );
 };

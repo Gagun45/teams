@@ -10,9 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import useCurrentUser from "@/hooks/useCurrentUser";
+
 import { UserCircle2Icon } from "lucide-react";
+
 import Link from "next/link";
 
 const UserButton = () => {
