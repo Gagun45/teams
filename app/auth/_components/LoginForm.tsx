@@ -11,20 +11,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { login } from "@/lib/auth.actions";
 import type { LoginFormType } from "@/lib/types";
 import { loginSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "./ErrorMessage";
-import { useState } from "react";
-import SuccessMessage from "./SuccessMessage";
-import { useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 
 const LoginForm = () => {
-  const { update } = useSession();
-  const [error, setError] = useState<string | null>();
-  const [success, setSuccess] = useState<string | null>();
+  const params = useSearchParams();
+  const error = params.get("error");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const form = useForm<LoginFormType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,11 +34,10 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (values: LoginFormType) => {
-    setSuccess(null);
-    setError(null);
-    const result = await login(values);
-    console.log('logged in')
-    if (result.success) await update();
+    startTransition(async () => {
+      await signIn("credentials", values);
+      router.push("/teams/own");
+    });
   };
 
   return (
@@ -71,14 +70,11 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        {error && <ErrorMessage message={error} />}
-        {success && <SuccessMessage message={success} />}
-
-        {form.formState.isSubmitting ? (
-          <LoadingButton />
-        ) : (
-          <Button disabled={form.formState.isSubmitting}>Login</Button>
+        {error === "CredentialsSignin" && (
+          <ErrorMessage message={"Invalid credentials"} />
         )}
+
+        {isPending ? <LoadingButton /> : <Button>Login</Button>}
       </form>
     </Form>
   );

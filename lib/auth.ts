@@ -25,6 +25,9 @@ declare module "next-auth/jwt" {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  pages: {
+    signIn: "/auth/login",
+  },
   callbacks: {
     session: async ({ session, token }) => {
       if (!token.sub) return session;
