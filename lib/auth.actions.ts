@@ -49,7 +49,7 @@ export const login = async (values: LoginFormType) => {
   if (!passwordMatch) return { error: "Credentials invalid" };
 
   try {
-    await signIn("credentials", { email, password, redirectTo: "/protected" });
+    await signIn("credentials", { email, password, redirectTo: "/homepage" });
     return { success: "Logged in" };
   } catch (err) {
     if (err instanceof AuthError) {

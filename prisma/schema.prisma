@@ -8,32 +8,50 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String       @id @default(cuid())
   name          String
-  email         String    @unique
+  email         String       @unique
   emailVerified DateTime?
   password      String?
-  role          UserRoles @default(user)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  createdTeams  Team[]      @relation("creator")
-  memberTeams   Team[]    @relation("member")
+  role          UserRoles    @default(user)
+  teams         TeamMember[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  Team          Team[]
 }
 
 model Team {
   id   String @id @default(cuid())
   name String
 
-  members User[] @relation("member")
+  creator   User   @relation(fields: [creatorId], references: [id])
+  creatorId String
 
-  creator   User   @relation("creator", fields: [creatorId], references: [id])
-  creatorId String 
+  members TeamMember[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model TeamMember {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+
+  teamRole TeamRoles
+
+  @@id([userId, teamId])
+}
+
 enum UserRoles {
   user
   admin
+}
+
+enum TeamRoles {
+  viewer
+  admin
+  owner
 }

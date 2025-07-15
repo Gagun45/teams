@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { UserCircle2Icon } from "lucide-react";
+import Link from "next/link";
 
 const UserButton = () => {
   const user = useCurrentUser();
@@ -28,10 +29,15 @@ const UserButton = () => {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={"/teams/all"}>All teams</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={"/teams/new"}>Create Team</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={"/teams/own"}>Own teams</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <LogoutButton />
         <DropdownMenuSeparator />

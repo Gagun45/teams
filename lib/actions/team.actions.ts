@@ -13,15 +13,18 @@ export const createNewTeam = async (values: NewTeamType) => {
     if (!validatedFields.success) return { error: "Invalid fields" };
     const { name } = validatedFields.data;
 
-    await prisma.team.create({
+    const newTeam = await prisma.team.create({
       data: {
         name,
-        creator: {
-          connect: {
-            id: session.user.id,
-          },
-        },
-        members: { connect: [{ id: session.user.id }] },
+        creator: { connect: { id: session.user.id } },
+      },
+    });
+
+    await prisma.teamMember.create({
+      data: {
+        userId: session.user.id,
+        teamId: newTeam.id,
+        teamRole: "owner",
       },
     });
 

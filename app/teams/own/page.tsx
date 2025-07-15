@@ -1,3 +1,4 @@
+import OwnTeamCard from "@/components/Team/OwnTeam/OwnTeamCard";
 import { auth } from "@/lib/auth";
 import { getOwnTeamsById } from "@/lib/helper/team.helper";
 
@@ -10,16 +11,13 @@ const OwnTeams = async () => {
   const ownTeams = await getOwnTeamsById(user.id);
 
   return (
-    <div>
-      {ownTeams?.map((team) => (
-        <span key={team.name}>
-          {team.name}, members:{" "}
-          {team.members.map((member) => (
-            <span key={member.id}>{member.name}</span>
-          ))}
-        </span>
-      ))}
-    </div>
+    <main>
+      <div className="flex flex-col">
+        {ownTeams?.map((team) => (
+          <OwnTeamCard key={team.id} team={team}/>
+        ))}
+      </div>
+    </main>
   );
 };
 export default OwnTeams;

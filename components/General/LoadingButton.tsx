@@ -1,10 +1,10 @@
 import { Button } from "../ui/button";
-import {RingLoader } from "react-spinners";
+import { RingLoader } from "react-spinners";
 
 const LoadingButton = () => {
   return (
     <Button>
-      <RingLoader size={'24px'} color='green' /> Loading...
+      <RingLoader size={"24px"} color="green" />
     </Button>
   );
 };

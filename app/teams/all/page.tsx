@@ -7,12 +7,7 @@ const ProtectedPage = async () => {
     <main>
       <div className="flex gap-4 flex-wrap">
         {allTeams?.map((team) => (
-          <TeamCard
-            key={team.id}
-            membersLength={team.members.length}
-            name={team.name}
-            owner={team.creator.name}
-          />
+          <TeamCard key={team.id} team={team} />
         ))}
       </div>
     </main>

@@ -1,6 +1,11 @@
 import type z from "zod";
 import type { loginSchema, newTeamSchema, registerSchema } from "./zod-schemas";
+import type { Prisma } from "@prisma/client";
 
 export type RegisterFormType = z.infer<typeof registerSchema>;
 export type LoginFormType = z.infer<typeof loginSchema>;
-export type NewTeamType = z.infer<typeof newTeamSchema>
+export type NewTeamType = z.infer<typeof newTeamSchema>;
+
+export type TeamWithMembersAndOwner = Prisma.TeamGetPayload<{
+  include: { members: { include: { user: true } }; creator: true };
+}>;

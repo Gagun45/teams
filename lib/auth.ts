@@ -6,7 +6,10 @@ import { getUserById } from "./helper/user.helper";
 import type { User, UserRoles } from "@prisma/client";
 import "next-auth/jwt";
 
-type ExtendedUser = User & { role: UserRoles; emailVerified: Date | null };
+type ExtendedUser = User & {
+  role: UserRoles;
+  emailVerified: Date | null;
+};
 
 declare module "next-auth" {
   interface Session {
