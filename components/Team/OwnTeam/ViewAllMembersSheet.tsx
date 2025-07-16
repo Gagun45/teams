@@ -1,11 +1,19 @@
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import type { TeamWithMembersAndOwner } from "@/lib/types";
+import MemberCard from "./MemberCard";
 
 interface Props {
-    team: TeamWithMembersAndOwner
+  team: TeamWithMembersAndOwner;
 }
 
-const ViewAllMembersSheet = ({team}: Props) => {
+const ViewAllMembersSheet = ({ team }: Props) => {
   return (
     <Sheet>
       <SheetTrigger className="underline cursor-pointer">(Manage)</SheetTrigger>
@@ -18,9 +26,9 @@ const ViewAllMembersSheet = ({team}: Props) => {
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col">
-            {team.members.map(member=>(
-                <span key={member.userId}>{member.user.name}</span>
-            ))}
+          {team.members.map((member) => (
+            <MemberCard key={member.userId} member={member} />
+          ))}
         </div>
       </SheetContent>
     </Sheet>

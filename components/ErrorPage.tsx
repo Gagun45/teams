@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { PuffLoader } from "react-spinners";
 import { toast } from "sonner";
 
 const ErrorPage = () => {
@@ -11,6 +12,10 @@ const ErrorPage = () => {
     router.push("/");
   }, [router]);
 
-  return <></>;
+  return (
+    <main>
+      <PuffLoader />
+    </main>
+  );
 };
 export default ErrorPage;

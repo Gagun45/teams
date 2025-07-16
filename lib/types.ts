@@ -9,3 +9,7 @@ export type NewTeamType = z.infer<typeof newTeamSchema>;
 export type TeamWithMembersAndOwner = Prisma.TeamGetPayload<{
   include: { members: { include: { user: true } }; creator: true };
 }>;
+
+export type MembersWithUsers = Prisma.TeamGetPayload<{
+  select: { members: { include: { user: true } } };
+}>;

@@ -63,7 +63,21 @@ export const leaveTeam = async (teamId: string) => {
     await prisma.teamMember.delete({
       where: { userId_teamId: { teamId, userId } },
     });
-    return {success: "You left a team"}
+    return { success: "You left a team" };
+  } catch {
+    return { error: "Something went wrong" };
+  }
+};
+
+export const deleteUserFromTeam = async (teamId: string, userId: string) => {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return { error: "Authorized only" };
+    await prisma.teamMember.delete({
+      where: { userId_teamId: { teamId, userId } },
+    });
+    return { success: "User removed" };
   } catch {
     return { error: "Something went wrong" };
   }
