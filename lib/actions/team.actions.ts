@@ -102,3 +102,42 @@ export const deleteUserFromTeam = async (teamId: string, userId: string) => {
     return { error: "Something went wrong" };
   }
 };
+
+export const sendMessage = async (teamId: string, message: string) => {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return { error: "Authorized only" };
+    const userId = user.id;
+    const newMessage = await prisma.teamMessage.create({
+      data: { message, teamId, userId },
+      include: { user: true },
+    });
+    await pusher.trigger(`team-${teamId}`, "new-team-message", {
+      id: newMessage.id,
+      message: newMessage.message,
+      user: newMessage.user,
+    });
+    return { success: "Message sent" };
+  } catch {
+    return { error: "Something went wrong" };
+  }
+};
+
+export const deleteMessage = async (messageId: string) => {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return { error: "Authorized only" };
+    const userId = user.id;
+    const deletedMessage = await prisma.teamMessage.delete({
+      where: { id: messageId, userId },
+    });
+    await pusher.trigger(`team-${deletedMessage.teamId}`, "deleted-message", {
+      id: deletedMessage.id,
+    });
+    return { success: "Message deleted" };
+  } catch {
+    return { error: "Something went wrong" };
+  }
+};

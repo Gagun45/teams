@@ -31,7 +31,11 @@ export const getTeamById = async (id: string) => {
   try {
     const team = await prisma.team.findUnique({
       where: { id },
-      include: { members: { include: { user: true } } },
+      include: {
+        members: { include: { user: true } },
+        creator: true,
+        TeamMessage: { include: { user: true } },
+      },
     });
     return team;
   } catch {
@@ -76,4 +80,8 @@ export const checkMembership = async (teamId: string) => {
 
 export const revalidateOwnTeamData = async () => {
   revalidatePath("/teams/own");
+};
+
+export const revalidateTeamData = async (teamId: string) => {
+  revalidatePath(`/teams/team/${teamId}`);
 };

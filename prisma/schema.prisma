@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String
-  email         String       @unique
+  email         String        @unique
   emailVerified DateTime?
   password      String?
-  role          UserRoles    @default(user)
+  role          UserRoles     @default(user)
   teams         TeamMember[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   createdTeams  Team[]
+  TeamMessage   TeamMessage[]
 }
 
 model Team {
@@ -31,8 +32,9 @@ model Team {
 
   joinLinkToken String @unique @default(cuid())
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TeamMessage TeamMessage[]
 }
 
 model TeamMember {
@@ -45,6 +47,17 @@ model TeamMember {
   teamRole TeamRoles
 
   @@id([userId, teamId])
+}
+
+model TeamMessage {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String
+
+  message String
 }
 
 enum UserRoles {
