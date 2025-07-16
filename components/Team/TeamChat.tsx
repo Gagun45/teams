@@ -2,10 +2,11 @@
 
 import type { TeamWithMembersAndOwnerAndMessages } from "@/lib/types";
 import TeamMessage from "./TeamMessage";
-import useTeamChat from "@/hooks/useTeamChat";
+import useTeamChatMessages from "@/hooks/useTeamChat";
 
 const TeamChat = ({ team }: { team: TeamWithMembersAndOwnerAndMessages }) => {
-  const messages = useTeamChat(team);
+
+  const messages = useTeamChatMessages(team.id);
 
   return (
     <div className="w-full h-full border-2 flex flex-col">

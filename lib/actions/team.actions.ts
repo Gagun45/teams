@@ -141,3 +141,29 @@ export const deleteMessage = async (messageId: string) => {
     return { error: "Something went wrong" };
   }
 };
+
+export const getTeamMessages = async (teamId: string) => {
+  try {
+    const session = await auth();
+    const user = session?.user;
+    if (!user) return { error: "Authorized only" };
+    const userId = user.id;
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      include: { members: true },
+    });
+
+    if (!team?.members.some((member) => member.userId === userId))
+      return { error: "Access denied" };
+
+    const teamMessages = await prisma.teamMessage.findMany({
+      where: { teamId },
+      include: { user: true },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    });
+    return { teamMessages };
+  } catch {
+    return { error: "Something went wrong" };
+  }
+};
