@@ -1,6 +1,7 @@
 "use client";
 
 import LogoutButton from "@/app/auth/_components/LogoutButton";
+import Pusher from "pusher-js";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -15,9 +16,40 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import { UserCircle2Icon } from "lucide-react";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { revalidateOwnTeamData } from "@/lib/helper/team.helper";
 
 const UserButton = () => {
   const user = useCurrentUser();
+  useEffect(() => {
+    const pusher = new Pusher("c95679ae0599cdb806b7", {
+      cluster: "eu",
+    });
+
+    const channel = pusher.subscribe("all-users");
+
+    channel.bind("new-not", (data: { message: string }) => {
+      toast.success(data.message);
+    });
+    return () => pusher.unsubscribe("all-users");
+  }, []);
+  useEffect(() => {
+    if (!user) return;
+    console.log(user.id);
+    const pusher = new Pusher("c95679ae0599cdb806b7", {
+      cluster: "eu",
+      authEndpoint: "/api/pusher/auth",
+    });
+
+    const channel = pusher.subscribe(`private-user-${user.id}`);
+
+    channel.bind("private-notification", (data: { message: string }) => {
+      revalidateOwnTeamData();
+      toast.success(data.message);
+    });
+    return () => pusher.unsubscribe(`private-user-${user.id}`);
+  }, [user]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="cursor-pointer">

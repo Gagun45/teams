@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { prisma } from "../db";
 
@@ -71,4 +72,8 @@ export const checkMembership = async (teamId: string) => {
     where: { userId_teamId: { teamId, userId } },
   });
   return Boolean(isMember);
+};
+
+export const revalidateOwnTeamData = async () => {
+  revalidatePath("/teams/own");
 };

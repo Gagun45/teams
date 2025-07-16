@@ -3,6 +3,7 @@
 import { auth } from "../auth";
 import { prisma } from "../db";
 import { getTeamByJoinLinkToken } from "../helper/team.helper";
+import { pusher } from "../pusher/pusher";
 import type { NewTeamType } from "../types";
 import { newTeamSchema } from "../zod-schemas";
 
@@ -29,6 +30,10 @@ export const createNewTeam = async (values: NewTeamType) => {
       },
     });
 
+    await pusher.trigger("all-users", "new-not", {
+      message: "New Team Created PUUUUSHER",
+    });
+
     return { success: "Team created" };
   } catch (err) {
     console.log("Error: ", err);
@@ -52,6 +57,12 @@ export const joinTeamByLink = async (joinLinkToken: string) => {
       userId: user.id,
     },
   });
+  const owner = await prisma.user.findFirst({
+    where: { createdTeams: { some: { id: team.id } } },
+  });
+  await pusher.trigger(`private-user-${owner?.id}`, "private-notification", {
+    message: "Member joined your team",
+  });
   return { teamId: joinedTeam.teamId };
 };
 
@@ -62,6 +73,12 @@ export const leaveTeam = async (teamId: string) => {
     if (!userId) throw new Error();
     await prisma.teamMember.delete({
       where: { userId_teamId: { teamId, userId } },
+    });
+    const owner = await prisma.user.findFirst({
+      where: { createdTeams: { some: { id: teamId } } },
+    });
+    await pusher.trigger(`private-user-${owner?.id}`, "private-notification", {
+      message: "Member left from your team",
     });
     return { success: "You left a team" };
   } catch {
@@ -76,6 +93,9 @@ export const deleteUserFromTeam = async (teamId: string, userId: string) => {
     if (!user) return { error: "Authorized only" };
     await prisma.teamMember.delete({
       where: { userId_teamId: { teamId, userId } },
+    });
+    await pusher.trigger(`private-user-${userId}`, "private-notification", {
+      message: "You were removed from team",
     });
     return { success: "User removed" };
   } catch {
