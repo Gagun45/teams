@@ -17,7 +17,7 @@ model User {
   teams         TeamMember[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  Team          Team[]
+  createdTeams  Team[]
 }
 
 model Team {

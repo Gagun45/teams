@@ -3,6 +3,7 @@ import { getAllTeams } from "@/lib/helper/team.helper";
 
 const ProtectedPage = async () => {
   const allTeams = await getAllTeams();
+  
   return (
     <main>
       <div className="flex gap-4 flex-wrap">

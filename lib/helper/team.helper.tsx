@@ -54,10 +54,12 @@ export const getTeamByJoinLinkToken = async (joinLinkToken: string) => {
 export const getMyTeams = async () => {
   const session = await auth();
   const userId = session?.user.id;
-  if (!userId) return [];
+  if (!userId) return null;
+
   const myTeams = await prisma.team.findMany({
     where: { members: { some: { userId } } },
   });
+
   return myTeams;
 };
 

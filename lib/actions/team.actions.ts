@@ -45,12 +45,26 @@ export const joinTeamByLink = async (joinLinkToken: string) => {
   const user = session?.user;
   if (team.members.some((member) => member.userId === user.id))
     return { error: "Already joined" };
-  await prisma.teamMember.create({
+  const joinedTeam = await prisma.teamMember.create({
     data: {
       teamRole: "viewer",
       teamId: team.id,
       userId: user.id,
     },
   });
-  return { success: "You joined a team" };
+  return { teamId: joinedTeam.teamId };
+};
+
+export const leaveTeam = async (teamId: string) => {
+  try {
+    const session = await auth();
+    const userId = session?.user.id;
+    if (!userId) throw new Error();
+    await prisma.teamMember.delete({
+      where: { userId_teamId: { teamId, userId } },
+    });
+    return {success: "You left a team"}
+  } catch {
+    return { error: "Something went wrong" };
+  }
 };
