@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { prisma } from "../db";
 
@@ -27,14 +26,22 @@ export const getAllTeams = async () => {
   }
 };
 
-export const getTeamById = async (id: string) => {
+export const getTeamById = async (teamId: string) => {
   try {
     const team = await prisma.team.findUnique({
-      where: { id },
+      where: { id: teamId },
       include: {
         members: { include: { user: true } },
         creator: true,
-        TeamMessage: { include: { user: true } },
+        TeamMessage: {
+          where: { softDeleted: false },
+          include: { user: true },
+          orderBy: { createdAt: "desc" },
+          take: 4,
+        },
+        _count: {
+          select: { TeamMessage: { where: { teamId, softDeleted: false } } },
+        },
       },
     });
     return team;
@@ -78,10 +85,3 @@ export const checkMembership = async (teamId: string) => {
   return Boolean(isMember);
 };
 
-export const revalidateOwnTeamData = async () => {
-  revalidatePath("/teams/own");
-};
-
-export const revalidateTeamData = async (teamId: string) => {
-  revalidatePath(`/teams/team/${teamId}`);
-};

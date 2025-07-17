@@ -18,7 +18,10 @@ import { UserCircle2Icon } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { revalidateOwnTeamData } from "@/lib/helper/team.helper";
+import {
+  revalidateLayout,
+  revalidateOwnTeamData,
+} from "@/lib/helper/revalidate";
 
 const UserButton = () => {
   const user = useCurrentUser();
@@ -47,6 +50,10 @@ const UserButton = () => {
     channel.bind("private-notification", (data: { message: string }) => {
       revalidateOwnTeamData();
       toast.success(data.message);
+    });
+    channel.bind("deleted-team", async () => {
+      await revalidateLayout();
+      toast.success("Team Deleted");
     });
     return () => pusher.unsubscribe(`private-user-${user.id}`);
   }, [user]);

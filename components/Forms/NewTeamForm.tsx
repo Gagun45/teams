@@ -17,12 +17,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import ErrorMessage from "@/app/auth/_components/ErrorMessage";
-import SuccessMessage from "@/app/auth/_components/SuccessMessage";
 import { createNewTeam } from "@/lib/actions/team.actions";
+import { toast } from "sonner";
+import { revalidateLayout } from "@/lib/helper/revalidate";
 
 const NewTeamForm = () => {
   const [error, setError] = useState<string | null>();
-  const [success, setSuccess] = useState<string | null>();
   const form = useForm<NewTeamType>({
     resolver: zodResolver(newTeamSchema),
     defaultValues: {
@@ -31,11 +31,14 @@ const NewTeamForm = () => {
   });
 
   const onSubmit = async (values: NewTeamType) => {
-    setSuccess(null);
     setError(null);
     const result = await createNewTeam(values);
     setError(result?.error);
-    setSuccess(result?.success);
+    if (result.success) {
+      toast.success("New team created");
+      await revalidateLayout();
+      form.reset();
+    }
   };
 
   return (
@@ -55,7 +58,6 @@ const NewTeamForm = () => {
           )}
         />
         {error && <ErrorMessage message={error} />}
-        {success && <SuccessMessage message={success} />}
 
         {form.formState.isSubmitting ? (
           <LoadingButton />

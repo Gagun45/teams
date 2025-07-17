@@ -1,3 +1,5 @@
+"use client";
+
 import useCurrentUser from "@/hooks/useCurrentUser";
 import type { User } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -5,7 +7,7 @@ import { UserCircle2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { deleteMessage } from "@/lib/actions/team.actions";
 
-interface Props {
+export interface MessageInt {
   message: {
     id: string;
     message: string;
@@ -13,7 +15,7 @@ interface Props {
   };
 }
 
-const TeamMessage = ({ message }: Props) => {
+const TeamMessage = ({ message }: MessageInt) => {
   const user = useCurrentUser();
   const isMyMessage = user?.id === message.user.id;
   return (

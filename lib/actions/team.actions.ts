@@ -130,8 +130,9 @@ export const deleteMessage = async (messageId: string) => {
     const user = session?.user;
     if (!user) return { error: "Authorized only" };
     const userId = user.id;
-    const deletedMessage = await prisma.teamMessage.delete({
+    const deletedMessage = await prisma.teamMessage.update({
       where: { id: messageId, userId },
+      data: { softDeleted: true },
     });
     await pusher.trigger(`team-${deletedMessage.teamId}`, "deleted-message", {
       id: deletedMessage.id,
@@ -142,7 +143,8 @@ export const deleteMessage = async (messageId: string) => {
   }
 };
 
-export const getTeamMessages = async (teamId: string) => {
+export const getTeamMessages = async (teamId: string, skip: number) => {
+  const take = 4;
   try {
     const session = await auth();
     const user = session?.user;
@@ -156,13 +158,51 @@ export const getTeamMessages = async (teamId: string) => {
     if (!team?.members.some((member) => member.userId === userId))
       return { error: "Access denied" };
 
-    const teamMessages = await prisma.teamMessage.findMany({
-      where: { teamId },
-      include: { user: true },
-      orderBy: { createdAt: "desc" },
-      take: 4,
+    const [teamMessages, totalCount] = await Promise.all([
+      prisma.teamMessage.findMany({
+        where: { teamId, softDeleted: false },
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take,
+      }),
+      prisma.teamMessage.count({ where: { teamId, softDeleted: false } }),
+    ]);
+    return { teamMessages, totalCount };
+  } catch {
+    return { error: "Something went wrong" };
+  }
+};
+
+export const deleteTeam = async (teamId: string) => {
+  try {
+    const session = await auth();
+    const userId = session?.user.id;
+    if (!userId) return { error: "Authorized only" };
+    const team = await prisma.team.findUnique({
+      where: { id: teamId },
+      include: { members: { include: { user: true } } },
     });
-    return { teamMessages };
+
+    if (!team) return { error: "Team not found" };
+    if (
+      team.members.find((member) => member.userId === userId)?.teamRole !==
+      "owner"
+    )
+      return { error: "Access denied" };
+
+    const deletedTeam = await prisma.team.delete({
+      where: { id: teamId },
+      include: { members: true },
+    });
+
+    await Promise.all(
+      deletedTeam.members.map(async (member) => {
+        pusher.trigger(`private-user-${member.userId}`, "deleted-team", {});
+      })
+    );
+
+    return { success: "Team, team members, teammessages deleted" };
   } catch {
     return { error: "Something went wrong" };
   }

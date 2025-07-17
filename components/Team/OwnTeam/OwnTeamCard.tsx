@@ -2,6 +2,7 @@ import type { TeamWithMembersAndOwner } from "@/lib/types";
 import Image from "next/image";
 import ViewAllMembersSheet from "./ViewAllMembersSheet";
 import JoinLink from "./JoinLink";
+import DeleteTeam from "./DeleteTeam";
 
 interface Props {
   team: TeamWithMembersAndOwner;
@@ -19,6 +20,7 @@ const OwnTeamCard = ({ team }: Props) => {
         <span>
           Members: {team.members.length} <ViewAllMembersSheet team={team} />
         </span>
+        <DeleteTeam teamId={team.id} />
         <JoinLink joinLink={joinLink} />
       </div>
     </div>
