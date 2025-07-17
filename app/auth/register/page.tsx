@@ -8,6 +8,7 @@ const RegisterPage = () => {
         title="Register"
         linkHref="/auth/login"
         linkLable="Back to login"
+        cardHeading="Auth"
       >
         <RegisterForm />
       </CardWrapper>

@@ -4,7 +4,7 @@ import NewTeamForm from "@/components/Forms/NewTeamForm"
 const NewTeamPage = () => {
   return (
     <main>
-      <CardWrapper>
+      <CardWrapper cardHeading="Creating new team">
         <NewTeamForm/>
       </CardWrapper>
     </main>

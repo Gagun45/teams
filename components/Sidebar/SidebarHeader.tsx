@@ -3,7 +3,7 @@ import Link from "next/link"
 
 const SidebarHeader = () => {
   return (
-    <div className="h-32 bg-secondary flex items-center justify-center">
+    <div className="size-full bg-secondary flex items-center justify-center">
         <Link href={"/"} className="relative size-12 lg:size-24">
           <Image src={"/teamLogo.svg"} fill alt="Logo" className="size-4" />
         </Link>

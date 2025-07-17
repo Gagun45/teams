@@ -8,6 +8,7 @@ const LoginPage = () => {
         title="Login"
         linkHref="/auth/register"
         linkLable="Don`t have an account?"
+        cardHeading="Auth"
       >
         <LoginForm />
       </CardWrapper>

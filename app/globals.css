@@ -136,3 +136,14 @@
     @apply py-12 min-h-[calc(100vh-128px)] bg-secondary
   }
 }
+
+@layer components {
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

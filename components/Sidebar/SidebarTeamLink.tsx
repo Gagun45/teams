@@ -11,7 +11,7 @@ const SidebarTeamLink = ({ team }: Props) => {
   return (
     <Link
       href={`/teams/team/${team.id}`}
-      className="size-12 lg:size-16 relative hover:scale-[1.2] rounded-full overflow-hidden duration-100"
+      className="size-12 lg:size-16 shrink-0 cursor-pointer relative hover:scale-[1.2] rounded-full overflow-hidden duration-100"
     >
       <Tooltip>
         <TooltipTrigger asChild>
