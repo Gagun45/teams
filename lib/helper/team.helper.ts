@@ -75,6 +75,7 @@ export const getMyTeams = async () => {
   return myTeams;
 };
 
+
 export const checkMembership = async (teamId: string) => {
   const session = await auth();
   const userId = session?.user.id;

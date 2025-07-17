@@ -1,7 +1,5 @@
-import ErrorPage from "@/components/ErrorPage";
-import SuccessPage from "@/components/SuccessPage";
-import { joinTeamByLink } from "@/lib/actions/team.actions";
-import { BeatLoader } from "react-spinners";
+import { getTeamByJoinLinkToken } from "@/lib/helper/team.helper";
+import JoinTeamCard from "./JoinTeamCard";
 
 const JoinPage = async ({
   searchParams,
@@ -11,14 +9,11 @@ const JoinPage = async ({
   const token = (await searchParams).token;
   if (!token) return <main>Missing token</main>;
   const joinLinkToken = typeof token === "string" ? token : token[0];
-  const result = await joinTeamByLink(joinLinkToken);
-  if (result.teamId) return <SuccessPage teamId={result.teamId} />;
-  if (result.error) return <ErrorPage />;
-
+  const team = await getTeamByJoinLinkToken(joinLinkToken);
+  if (!team) return <span>No team found</span>;
   return (
     <main>
-      <span>Error: {result?.error}</span>
-      <BeatLoader />
+      <JoinTeamCard team={team} joinLinkToken={joinLinkToken} />
     </main>
   );
 };
