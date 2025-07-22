@@ -3,6 +3,8 @@
 import { auth } from "../auth";
 import { prisma } from "../db";
 
+const BASE_URL = process.env.BASE_URL;
+
 export const getOwnTeamsById = async (id: string) => {
   try {
     const ownTeams = await prisma.team.findMany({
@@ -52,10 +54,7 @@ export const getTeamById = async (teamId: string) => {
 
 export const getTeamByJoinLinkToken = async (joinLinkToken: string) => {
   if (!joinLinkToken) return null;
-  const token = joinLinkToken.replace(
-    "http://localhost:3000/teams/join?token=",
-    ""
-  )
+  const token = joinLinkToken.replace(`${BASE_URL}/teams/join?token=`, "");
   try {
     const team = await prisma.team.findFirstOrThrow({
       where: { joinLinkToken: token },

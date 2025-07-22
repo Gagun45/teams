@@ -8,8 +8,10 @@ interface Props {
   team: TeamWithMembersAndOwner;
 }
 
+const BASE_URL = process.env.BASE_URL;
+
 const OwnTeamCard = ({ team }: Props) => {
-  const joinLink = `http://localhost:3000/teams/join?token=${team.joinLinkToken}`;
+  const joinLink = `${BASE_URL}/teams/join?token=${team.joinLinkToken}`;
   return (
     <div className="flex items-center gap-4">
       <div className="size-36 relative">
