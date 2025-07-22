@@ -2,11 +2,16 @@ import { auth } from "@/lib/auth";
 import { NextResponse, type NextRequest } from "next/server";
 import Pusher from "pusher";
 
+const appId = process.env.APPID!;
+const cluster = process.env.CLUSTER!;
+const secret = process.env.SECRET!;
+const key = process.env.KEY!;
+
 const pusher = new Pusher({
-  appId: "2023278",
-  cluster: "eu",
-  secret: "8b8a4d72311c315a8434",
-  key: "c95679ae0599cdb806b7",
+  appId,
+  cluster,
+  secret,
+  key,
   useTLS: true,
 });
 
