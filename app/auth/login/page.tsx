@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import CardWrapper from "../_components/CardWrapper";
 import LoginForm from "../_components/LoginForm";
+import { BarLoader } from "react-spinners";
 
 const LoginPage = () => {
   return (
@@ -10,7 +12,9 @@ const LoginPage = () => {
         linkLable="Don`t have an account?"
         cardHeading="Auth"
       >
-        <LoginForm />
+        <Suspense fallback={<BarLoader />}>
+          <LoginForm />
+        </Suspense>
       </CardWrapper>
     </main>
   );
