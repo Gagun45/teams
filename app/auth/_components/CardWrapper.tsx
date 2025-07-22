@@ -18,7 +18,7 @@ const CardWrapper = ({
   cardHeading,
 }: Props) => {
   return (
-    <div className="border-2 px-8 md:px-16 rounded-md shadow-2xl min-h-96 flex gap-8 flex-col items-center py-6 max-w-xl mx-auto">
+    <div className="border-2 px-8 md:px-16 rounded-md shadow-2xl min-h-96 flex gap-8 w-full flex-col items-center py-6 max-w-xl mx-auto">
       <div className="flex text-4xl tracking-widest font-bold items-center">
         {cardHeading && <h2>{cardHeading}</h2>}
       </div>

@@ -10,9 +10,19 @@ const JoinPage = async ({
   if (!token) return <main>Missing token</main>;
   const joinLinkToken = typeof token === "string" ? token : token[0];
   const team = await getTeamByJoinLinkToken(joinLinkToken);
-  if (!team) return <span>No team found</span>;
+  const pageHeader = <h1 className="font-bold text-center text-4xl mb-12">Join a team</h1>;
+  if (!team)
+    return (
+      <main className="text-center">
+        {pageHeader}
+        <span className="font-semibold text-2xl">
+          No team found. Please check the join link
+        </span>
+      </main>
+    );
   return (
     <main>
+      {pageHeader}
       <JoinTeamCard team={team} joinLinkToken={joinLinkToken} />
     </main>
   );

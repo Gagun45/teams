@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import TeamMessage from "./TeamMessage";
 import type { User } from "@prisma/client";
 import { Button } from "../ui/button";
 import { getTeamMessages } from "@/lib/actions/team.actions";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import Pusher from "pusher-js";
+import SendMessage from "./SendMessage";
+import LoadingButton from "../General/LoadingButton";
 
 interface MessageInt {
   id: string;
@@ -23,6 +25,7 @@ interface Props {
 const TeamChat = ({ initialMessages, totalCount, teamId }: Props) => {
   const [messages, setMessages] = useState(initialMessages);
   const [totalCountState, setTotalCountState] = useState(totalCount);
+  const [isPending, startTransition] = useTransition();
 
   const user = useCurrentUser();
   useEffect(() => {
@@ -45,24 +48,34 @@ const TeamChat = ({ initialMessages, totalCount, teamId }: Props) => {
     return () => pusher.unsubscribe(`team-${teamId}`);
   }, [teamId, user, setMessages, messages, totalCountState]);
 
-  const handleLoadMore = async () => {
-    const res = await getTeamMessages(teamId, messages.length);
-    if (res.teamMessages) {
-      setMessages((prev) => [...res.teamMessages.reverse(), ...prev]);
-      setTotalCountState(res.totalCount);
-    }
+  const handleLoadMore = () => {
+    startTransition(async () => {
+      const res = await getTeamMessages(teamId, messages.length);
+      if (res.teamMessages) {
+        setMessages((prev) => [...res.teamMessages.reverse(), ...prev]);
+        setTotalCountState(res.totalCount);
+      }
+    });
   };
   return (
-    <div className="w-full h-full border-2 flex flex-col">
+    <div className="w-full h-full border-2 gap-2 p-2 flex flex-col">
       {messages.length < totalCountState ? (
-        <Button onClick={handleLoadMore}>Load more</Button>
+        isPending ? (
+          <LoadingButton />
+        ) : (
+          <Button onClick={handleLoadMore} className="w-fit">
+            Load more
+          </Button>
+        )
       ) : (
         <span>No more messages</span>
       )}
-      <div>Total Count: {totalCountState}</div>
-      {messages.map((message) => {
-        return <TeamMessage key={message.id} message={message} />;
-      })}
+      <div className="h-120 flex flex-col overflow-auto gap-1">
+        {messages.map((message) => (
+          <TeamMessage key={message.id} message={message} />
+        ))}
+      </div>
+      <SendMessage teamId={teamId} />
     </div>
   );
 };

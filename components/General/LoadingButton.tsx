@@ -3,7 +3,7 @@ import { RingLoader } from "react-spinners";
 
 const LoadingButton = () => {
   return (
-    <Button>
+    <Button className="w-fit">
       <RingLoader size={"24px"} color="green" />
     </Button>
   );

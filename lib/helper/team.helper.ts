@@ -37,7 +37,7 @@ export const getTeamById = async (teamId: string) => {
           where: { softDeleted: false },
           include: { user: true },
           orderBy: { createdAt: "desc" },
-          take: 4,
+          take: 12,
         },
         _count: {
           select: { TeamMessage: { where: { teamId, softDeleted: false } } },
@@ -52,9 +52,13 @@ export const getTeamById = async (teamId: string) => {
 
 export const getTeamByJoinLinkToken = async (joinLinkToken: string) => {
   if (!joinLinkToken) return null;
+  const token = joinLinkToken.replace(
+    "http://localhost:3000/teams/join?token=",
+    ""
+  )
   try {
     const team = await prisma.team.findFirstOrThrow({
-      where: { joinLinkToken },
+      where: { joinLinkToken: token },
       include: { members: true },
     });
     return team;
@@ -75,7 +79,6 @@ export const getMyTeams = async () => {
   return myTeams;
 };
 
-
 export const checkMembership = async (teamId: string) => {
   const session = await auth();
   const userId = session?.user.id;
@@ -85,4 +88,3 @@ export const checkMembership = async (teamId: string) => {
   });
   return Boolean(isMember);
 };
-

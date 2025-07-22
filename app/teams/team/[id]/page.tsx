@@ -3,7 +3,6 @@ import { getTeamById } from "@/lib/helper/team.helper";
 import LeaveButton from "./LeaveButton";
 import { redirect } from "next/navigation";
 import TeamChat from "@/components/Team/TeamChat";
-import SendMessage from "@/components/Team/SendMessage";
 
 const TeamPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
@@ -34,7 +33,6 @@ const TeamPage = async ({ params }: { params: Promise<{ id: string }> }) => {
         totalCount={totalCount}
         teamId={team.id}
       />
-      <SendMessage teamId={team.id} />
       {teamRole !== "owner" && <LeaveButton teamId={team.id} />}
     </main>
   );

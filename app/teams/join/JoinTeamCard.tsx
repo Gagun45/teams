@@ -14,9 +14,9 @@ interface Props {
 
 const JoinTeamCard = ({ team, joinLinkToken }: Props) => {
   return (
-    <CardWrapper cardHeading="Join a team">
+    <CardWrapper>
       <div className="flex gap-6">
-        <div className="size-36 relative">
+        <div className="size-44 relative">
           <Image src={"https://github.com/shadcn.png"} alt="team image" fill />
         </div>
         <div className="flex flex-col">

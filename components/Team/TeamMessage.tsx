@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { UserCircle2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { deleteMessage } from "@/lib/actions/team.actions";
+import { useTransition } from "react";
+import LoadingButton from "../General/LoadingButton";
 
 export interface MessageInt {
   message: {
@@ -18,6 +20,12 @@ export interface MessageInt {
 const TeamMessage = ({ message }: MessageInt) => {
   const user = useCurrentUser();
   const isMyMessage = user?.id === message.user.id;
+  const [isPending, startTransition] = useTransition();
+  const handleOnDelete = (messageId: string) => {
+    startTransition(async () => {
+      await deleteMessage(messageId);
+    });
+  };
   return (
     <span
       key={message.id}
@@ -35,14 +43,17 @@ const TeamMessage = ({ message }: MessageInt) => {
         </AvatarFallback>
       </Avatar>
       <span>{message.message}</span>
-      {isMyMessage && (
-        <Button
-          variant={"destructive"}
-          onClick={() => deleteMessage(message.id)}
-        >
-          Delete
-        </Button>
-      )}
+      {isMyMessage &&
+        (isPending ? (
+          <LoadingButton />
+        ) : (
+          <Button
+            variant={"destructive"}
+            onClick={() => handleOnDelete(message.id)}
+          >
+            Delete
+          </Button>
+        ))}
     </span>
   );
 };

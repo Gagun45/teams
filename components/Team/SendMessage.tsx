@@ -2,7 +2,6 @@
 import { useState, useTransition } from "react";
 import { Button } from "../ui/button";
 import { sendMessage } from "@/lib/actions/team.actions";
-import { toast } from "sonner";
 import LoadingButton from "../General/LoadingButton";
 
 const SendMessage = ({ teamId }: { teamId: string }) => {
@@ -13,13 +12,16 @@ const SendMessage = ({ teamId }: { teamId: string }) => {
       const result = await sendMessage(teamId, message);
       if (result.success) {
         setMessage("");
-        toast.success("Message sent");
       }
     });
   };
   return (
     <div className="flex gap-4">
-      <input value={message} onChange={(e) => setMessage(e.target.value)} />
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        className="border-1 p-1 w-full max-w-lg rounded-md"
+      />
       {isPending ? (
         <LoadingButton />
       ) : (
